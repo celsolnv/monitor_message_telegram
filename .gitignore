@@ -1,0 +1,8 @@
+trash/
+*.session*
+__pycache__/
+venv/
+.idea/
+.env
+.me
+*.log
