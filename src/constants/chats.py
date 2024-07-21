@@ -1,11 +1,12 @@
 from typing import TypedDict
 
 chat_codes_aviator = {
-  # DF Bets Aviator 1WIN VIP 💎
-  '1win_vip' : -1001388227343,
-  # DF Bets Aviator REI DA 1 WIN
-  '1win': -1001775282342
+    # DF Bets Aviator 1WIN VIP 💎
+    "1win_vip": -1001388227343,
+    # DF Bets Aviator REI DA 1 WIN
+    "1win": -1001775282342,
 }
+
 
 class AviatorMessageType(TypedDict):
     attention: str
@@ -14,13 +15,13 @@ class AviatorMessageType(TypedDict):
     green: str
     red: str
 
+
 template_aviator_message: AviatorMessageType = {
-'attention': """" 
+    "attention": """" 
 🚨  ATENÇÃO, POSSÍVEL ENTRADA!  🚨 
 ENTRAR 1WIN AVIATOR
 """,
-
-'green': """
+    "green": """
 (4.94x) DEU GREEN!!! ✅✅✅
 24 Greens Seguidos!  🤑
 
@@ -29,8 +30,7 @@ SG: 115➖➖➖G1: 50➖➖➖G2: 31
 
 🎯Assertividade: 91,16%
 """,
-
-'red': """
+    "red": """
 ❌ RED!!
 
 ✅197➖➖➖➖➖➖➖➖✖21
@@ -38,8 +38,7 @@ SG: 116➖➖➖G1: 50➖➖➖G2: 31
 
 🎯Assertividade: 90,37%
 """,
-
-'opportunity': """
+    "opportunity": """
 ⚠ OPORTUNIDADE IDENTIFICADA ⚠
 🎰 1WIN AVIATOR 
 
@@ -48,9 +47,7 @@ SG: 116➖➖➖G1: 50➖➖➖G2: 31
 
 Entre No Jogo https://1wgrdr.life/#j4by/casino/play/aviator
 """,
-
-'gale': """
+    "gale": """
 ⚠ ATENÇÃO, VAMOS AO 1º GALE
-"""
-  
+""",
 }
