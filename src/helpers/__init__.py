@@ -1,3 +1,3 @@
-from .format_messages import map_message_type
+from .format_messages import get_type_message, get_reference_result
 
-__all__ = ["map_message_type"]
+__all__ = ["get_reference_result", "get_type_message"]

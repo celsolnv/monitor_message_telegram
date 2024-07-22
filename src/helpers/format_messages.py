@@ -28,6 +28,22 @@ def map_message_type(message: str) -> MapMessageType:
     }
 
 
+def get_type_message(message: str):
+    types = map_message_type(message)
+    if types["is_attention"]:
+        return "attention"
+    elif types["is_opportunity"]:
+        return "opportunity"
+    elif types["is_gale"]:
+        return "gale"
+    elif types["is_green"]:
+        return "green"
+    elif types["is_red"]:
+        return "red"
+    else:
+        return "is_unknown"
+
+
 def check_is_red(message: str):
     types = map_message_type(message)
     return types["is_red"]
@@ -52,7 +68,7 @@ def check_strategy(filename="mensagens.txt"):
     type_last_message = ""
     type_penultimate_message = ""
 
-    with open(filename, "r",  encoding="utf-8") as file:
+    with open(filename, "r", encoding="utf-8") as file:
         for line in file:
 
             is_red = check_is_red(line)
@@ -88,3 +104,8 @@ def check_strategy(filename="mensagens.txt"):
     print(f"Greens after one red: {count_greens_after_red}")
     print(f"Reds after one red: {count_red_after_one_red}")
     print(f"Percentage Greens after one red: {percentage_greens_after_red}%")
+
+
+def get_reference_result(message_text):
+    reference_result = message_text.split("Entrar após: ")[1].split("X")[0]
+    return reference_result

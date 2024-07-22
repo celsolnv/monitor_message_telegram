@@ -4,12 +4,15 @@ from pyrogram import Client
 
 load_dotenv()
 
+
 class TelegramClient:
     def __init__(self):
         self.api_id = os.getenv("API_ID")
         self.api_hash = os.getenv("API_HASH")
+        self.path = os.path.dirname(os.path.abspath("src"))
+        self.session_file = os.path.join(self.path, "anon")
         self.client = Client(
-            name="anon", api_id=self.api_id, api_hash=self.api_hash
+            name=self.session_file, api_id=self.api_id, api_hash=self.api_hash
         )
         # self.client.start()
 
