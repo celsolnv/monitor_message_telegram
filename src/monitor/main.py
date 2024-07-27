@@ -20,7 +20,7 @@ penultimate_type_message: MessageType = "is_unknown"
 
 
 def bet_aviator(reference: str):
-    data = {"reference_result": f'{reference}x', "limit": "2"}
+    data = {"reference_result": f"{reference}x", "limit": "2"}
     res = requests.post("http://localhost:8000/bet", json=data)
     print(res.json())
 
@@ -31,27 +31,19 @@ def monitor_messages(_, message):
     global last_type_message, penultimate_type_message
     message_text = message.text
     message_type = get_type_message(message_text)
-    # print(f"Nova mensagem no grupo: {message_text}")
-    # print(f"Mapeamento: {message_type}")
-
-    if (
-        HAS_REQUEST
-        and last_type_message != "is_unknown"
-        and penultimate_type_message != "is_unknown"
-    ):
-        if (
-            # last_type_message == "red"
-            penultimate_type_message == "red"
-            and message_type == "opportunity"
-        ):
-            reference = get_reference_result(message_text)
-            playsound("assets/notification.wav")
-            bet_aviator(reference)
-    if message_type == 'red' or message_type == 'green':
-        last_type_message, penultimate_type_message = message_type, last_type_message
+    print(f"Mensagem atual: {message_type}")
     print(f"Último tipo de mensagem: {last_type_message}")
     print(f"Penúltimo tipo de mensagem: {penultimate_type_message}")
-    print('\n')
+    print("\n")
+
+    if message_type == "opportunity" and last_type_message == "red":
+        playsound("assets/notification.wav")
+        reference = get_reference_result(message_text)
+        if HAS_REQUEST:
+            bet_aviator(reference)
+    elif message_type == "red" or message_type == "green":
+        last_type_message, penultimate_type_message = message_type, last_type_message
+    # TODO: Implementar logica para dá refresh no robo depois de x analises, uma vez que o robo pode ficar desatualizado
 
 
 app.run()

@@ -107,5 +107,9 @@ def check_strategy(filename="mensagens.txt"):
 
 
 def get_reference_result(message_text):
-    reference_result = message_text.split("Entrar após: ")[1].split("X")[0]
+    array = message_text.split("Entrar após: ")
+    if len(array) == 1:
+        return None
+
+    reference_result = array[1].split("X")[0]
     return reference_result
