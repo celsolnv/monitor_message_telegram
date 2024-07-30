@@ -1,60 +1,52 @@
 from pyrogram import filters
-import requests
 from constants.chats import chat_codes_aviator
 from telegram import TelegramClient
-from helpers import get_type_message, get_reference_result
-from typing import Literal
-from playsound import playsound
+from helpers import get_type_message
+from Manager import Manager
+import schedule
+from services import refresh
+import threading
+import time
 
-
-CHAT_ID = chat_codes_aviator["1win_vip"]
+CHAT_VIP_ID = chat_codes_aviator["1win_vip"]
+CHAT_ID = chat_codes_aviator["1win"]
+TIME_FOR_REFRESH = 15  # minutes
 
 telegramClient = TelegramClient()
 app = telegramClient.get_client()
 
-HAS_REQUEST = True
-
-MessageType = Literal["attention", "opportunity", "gale", "green", "red", "is_unknown"]
-last_type_message: MessageType = "is_unknown"
-penultimate_type_message: MessageType = "is_unknown"
-total_reds = 0
-total_greens = 0
-
-def bet_aviator(reference: str):
-    data = {"reference_result": f"{reference}x", "limit": "2"}
-    res = requests.post("http://localhost:8000/bet", json=data)
-    print(res.json())
+Manager_vip_group = Manager()
+Manager_group = Manager()
 
 
 # Função para monitor o grupo
-@app.on_message(filters.chat(CHAT_ID) & filters.text)
-def monitor_messages(_, message):
-    global last_type_message, penultimate_type_message
-    global total_reds, total_greens
+@app.on_message(filters.chat(CHAT_VIP_ID) & filters.text)
+def monitor_vip_group(_, message):
     message_text = message.text
     message_type = get_type_message(message_text)
-    print(f"Mensagem atual: {message_type}")
-    print(f"Último tipo de mensagem: {last_type_message}")
-    print(f"Penúltimo tipo de mensagem: {penultimate_type_message}")
-    print('#'*20)
-    print(f"REDS: {total_reds}")
-    print(f"GREENS: {total_greens}")
-    print("\n")
 
-    if message_type == "opportunity" and last_type_message == "red":
-        playsound("assets/notification.wav")
-        reference = get_reference_result(message_text)
-        if HAS_REQUEST:
-            bet_aviator(reference)
-    elif message_type == "red" or message_type == "green":
-        if message_type == "red" and last_type_message == "red":
-            total_reds += 1
-        elif message_type == "green" and last_type_message == "red":
-            total_greens += 1
-        last_type_message, penultimate_type_message = message_type, last_type_message
-
-    # TODO: Implementar logica para dá refresh no robo depois de x analises, uma vez que o robo pode ficar desatualizado
+    print(">>> VIP GROUP <<<")
+    Manager_vip_group.show_panel(message_type=message_type)
+    Manager_vip_group.bet_after_first_red(message_text, message_type)
 
 
+@app.on_message(filters.chat(CHAT_ID) & filters.text)
+def monitor_group(_, message):
+    message_text = message.text
+    message_type = get_type_message(message_text)
+
+    print("### NORMAL GROUP ###")
+    Manager_group.show_panel(message_type=message_type)
+    Manager_group.bet_after_first_red(message_text, message_type)
+
+
+def run_schedule():
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+
+
+schedule.every(TIME_FOR_REFRESH).minutes.do(refresh)
+threading.Thread(target=run_schedule, daemon=True).start()
 
 app.run()
