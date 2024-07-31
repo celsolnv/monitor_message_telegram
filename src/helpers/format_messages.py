@@ -43,6 +43,13 @@ def get_type_message(message: str):
     else:
         return "is_unknown"
 
+def get_assertiveness(message: str):
+    has_assertiveness = message.find("Assertividade")
+    if has_assertiveness != -1:
+        assertiveness = message.split("Assertividade: ")[1].split("%")[0]
+        assertiveness = assertiveness.replace(",", ".")
+        return float(assertiveness)
+    return None
 
 def check_is_red(message: str):
     types = map_message_type(message)

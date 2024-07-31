@@ -5,12 +5,15 @@ from services import bet_aviator, get_value, refresh
 
 class Manager:
     def __init__(self):
-        self.last_type_message = "is_unknown"
-        self.penultimate_type_message = "is_unknown"
-        self.third_to_last_type_message = "is_unknown"
         self.total_reds = 0
         self.total_greens = 0
         self.path_sound = "assets/notification.wav"
+        self.stack_type_result = []
+
+    def reset(self):
+        self.total_reds = 0
+        self.total_greens = 0
+        self.stack_type_result = []
 
     def show_panel(
         self,
@@ -25,9 +28,13 @@ class Manager:
         print("\n")
 
     def get_data(self):
+        last = self.stack_type_result[-1] if len(self.stack_type_result) > 0 else ""
+        penultimate = (
+            self.stack_type_result[-2] if len(self.stack_type_result) > 1 else ""
+        )
         return {
-            "last_type_message": self.last_type_message,
-            "penultimate_type_message": self.penultimate_type_message,
+            "last_type_message": last,
+            "penultimate_type_message": penultimate,
             "total_reds": self.total_reds,
             "total_greens": self.total_greens,
         }
@@ -39,80 +46,75 @@ class Manager:
         reference = get_reference_result(message_text)
         bet_aviator(reference)
 
-    def bet_after_first_red(self, message_text, message_type, has_bet=True):
-        if message_type == "opportunity" and self.last_type_message == "red":
-            if has_bet:
-                self.__play_sound()
-                self.__bet(message_text)
-        elif message_type == "red" or message_type == "green":
-            if message_type == "red" and self.last_type_message == "red":
+    def bet_after_first_red(self, message_text, message_type, has_bet=True, assertiveness=0):
+        if assertiveness < 70.0:
+            return
+        result = ""
+        last = self.stack_type_result[-1] if len(self.stack_type_result) > 0 else ""
+        is_valid_result = message_type == "red" or message_type == "green"
+        if last == "red":
+            if message_type == "opportunity":
+                if has_bet:
+                    self.__play_sound()
+                    self.__bet(message_text)
+            elif message_type == "red":
                 self.total_reds += 1
-            elif message_type == "green" and self.last_type_message == "red":
+                result = "red"
+            elif message_type == "green":
                 self.total_greens += 1
-            self.last_type_message = message_type
+                result = "green"
+        if is_valid_result:
+            self.stack_type_result.append(message_type)
 
-    def bet_after_second_red(self, message_text, message_type, has_bet=True, date=""):
-        if (
-            message_type == "opportunity"
-            and self.penultimate_type_message == "red"
-            and self.last_type_message == "red"
-        ):
-            if has_bet:
-                self.__play_sound()
-                self.__bet(message_text)
-        elif message_type == "red" or message_type == "green":
-            if (
-                message_type == "red"
-                and self.last_type_message == "red"
-                and self.penultimate_type_message == "red"
-            ):
-                print(date)
-                print(message_text)
-                self.total_reds += 1
-            elif (
-                message_type == "green"
-                and self.last_type_message == "red"
-                and self.penultimate_type_message == "red"
-            ):
-                self.total_greens += 1
-            self.last_type_message, self.penultimate_type_message = (
-                message_type,
-                self.last_type_message,
-            )
+        return result
 
-    def bet_after_third_red(self, message_text, message_type, has_bet=True, date=""):
-        if (
-            message_type == "opportunity"
-            and self.penultimate_type_message == "red"
-            and self.last_type_message == "red"
-            and self.third_to_last_type_message == "red"
-        ):
-            if has_bet:
-                self.__play_sound()
-                self.__bet(message_text)
-        elif message_type == "red" or message_type == "green":
-            if (
-                message_type == "red"
-                and self.last_type_message == "red"
-                and self.penultimate_type_message == "red"
-                and self.third_to_last_type_message == "red"
-            ):
-                print(date)
-                print(message_text)
+    def bet_after_second_red(self, message_text, message_type, has_bet=True, assertiveness=0):
+        result = ""
+        if assertiveness < 70.0:
+            return
+        last = self.stack_type_result[-1] if len(self.stack_type_result) > 0 else ""
+        penultimate = (
+            self.stack_type_result[-2] if len(self.stack_type_result) > 1 else ""
+        )
+        is_valid_result = message_type == "red" or message_type == "green"
+        if last == "red" and penultimate == "red":
+            if message_type == "opportunity":
+                if has_bet:
+                    self.__play_sound()
+                    self.__bet(message_text)
+            elif message_type == "red":
                 self.total_reds += 1
-            elif (
-                message_type == "green"
-                and self.last_type_message == "red"
-                and self.penultimate_type_message == "red"
-                and self.third_to_last_type_message == "red"
-            ):
+                result = "red"
+            elif message_type == "green":
                 self.total_greens += 1
-            (
-                self.last_type_message,
-                self.penultimate_type_message,
-                self.third_to_last_type_message,
-            ) = (
-                message_type,
-                self.last_type_message,
-                self.penultimate_type_message,
-            )
+                result = "green"
+        if is_valid_result:
+            self.stack_type_result.append(message_type)
+
+        return result
+
+    def bet_after_third_red(self, message_text, message_type, has_bet=True):
+        result = ""
+        last = self.stack_type_result[-1] if len(self.stack_type_result) > 0 else ""
+        penultimate = (
+            self.stack_type_result[-2] if len(self.stack_type_result) > 1 else ""
+        )
+        third_to_last = (
+            self.stack_type_result[-3] if len(self.stack_type_result) > 2 else ""
+        )
+        is_valid_result = message_type == "red" or message_type == "green"
+        if last == "red" and penultimate == "red" and third_to_last == "red":
+            if message_type == "opportunity":
+                if has_bet:
+                    self.__play_sound()
+                    self.__bet(message_text)
+            elif message_type == "red":
+                self.total_reds += 1
+                result = "red"
+            elif message_type == "green":
+                self.total_greens += 1
+                result = "green"
+        if is_valid_result:
+            self.stack_type_result.append(message_type)
+
+        return result

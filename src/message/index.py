@@ -12,7 +12,7 @@ old_messages = []
 
 FILENAME = "simulator_vip.log"
 CHAT_ID = chat_codes_aviator["1win_vip"]
-DATE_STR = "2024-07-25"
+DATE_STR = "2024-07-01"
 DATE = datetime.strptime(DATE_STR, "%Y-%m-%d")
 
 telegramClient = TelegramClient()
