@@ -16,15 +16,17 @@ def calculate_percentage(count: int, total: int) -> float:
 def map_message_type(message: str) -> MapMessageType:
     is_attention = message.find("ATENÇÃO, POSSÍVEL ENTRADA") != -1
     is_opportunity = message.find("OPORTUNIDADE") != -1
-    is_gale = message.find("GALE") != -1
     is_green = message.find("GREEN") != -1
     is_red = message.find("RED") != -1
+    is_first_gale = message.find("1º GALE") != -1
+    is_second_gale = message.find("2º GALE") != -1
     return {
         "is_attention": is_attention,
         "is_opportunity": is_opportunity,
-        "is_gale": is_gale,
         "is_green": is_green,
         "is_red": is_red,
+        "is_first_gale": is_first_gale,
+        "is_second_gale": is_second_gale,
     }
 
 
@@ -34,14 +36,17 @@ def get_type_message(message: str):
         return "attention"
     elif types["is_opportunity"]:
         return "opportunity"
-    elif types["is_gale"]:
-        return "gale"
     elif types["is_green"]:
         return "green"
     elif types["is_red"]:
         return "red"
+    elif types["is_first_gale"]:
+        return "first_gale"
+    elif types["is_second_gale"]:
+        return "second_gale"
     else:
         return "is_unknown"
+
 
 def get_assertiveness(message: str):
     has_assertiveness = message.find("Assertividade")
@@ -50,6 +55,7 @@ def get_assertiveness(message: str):
         assertiveness = assertiveness.replace(",", ".")
         return float(assertiveness)
     return None
+
 
 def check_is_red(message: str):
     types = map_message_type(message)

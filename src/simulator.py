@@ -1,51 +1,55 @@
-from helpers import get_type_message,  get_assertiveness
+from helpers import get_type_message, get_assertiveness
 from monitor import Manager
 
 FILENAME = "simulator_vip.log"
 LIMIT_REDS_PER_DAY = 2
-LIMIT_GREENS_PER_DAY = 1000
+LIMIT_GREENS_PER_DAY = 5
 VALUE_BET = 10
-HOUR_INITIAL = "01:00"
+HOUR_INITIAL = "09:00"
+HOUR_END = "13:59"
+GALE = 0
+FACTOR_MULTI  = 1
+if GALE == 1:
+    FACTOR_MULTI = 3
+elif GALE == 2:
+    FACTOR_MULTI = 7
+# ACCURACY = 85.0 + GALE = 0
+ACCURACY = 75.0
 
 def write_file(filename, content):
     with open(filename, "a") as file:
         file.write(content)
 
-manager = Manager()
+
 last_date = ""
 reds_day = 0
 greens_day = 0
 total_reds = 0
 total_greens = 0
 assertiveness = 0
-# Eu quero fazer um programa que vai mapear a hora que cada red acontece
-# e a hora que cada green acontece
-# e a quantidade de reds e greens por hora
 
-map_reds = {}
+manager = Manager()
 
+manager.set_accuracy(ACCURACY)
 # Clean file
 with open("results.log", "w") as file:
     file.write("")
-    
 
+print("Starting simulation...\n")
 with open(FILENAME, "r") as file:
     for line in file:
         date = line[0:10]
         time = line[11:19]
-        hour = line[11:13]
+        if time <= HOUR_INITIAL or time >= HOUR_END:
+            continue
+
         message = line[19:]
         message_type = get_type_message(message)
-        # if message_type == 'red':
-        #     if hour in map_reds:
-        #         map_reds[hour] += 1
-        #     else:
-        #         map_reds[hour] = 1
         assertiveness_prev = get_assertiveness(message)
-        if assertiveness_prev != None:
+
+        if assertiveness_prev is not None:
             assertiveness = assertiveness_prev
-        if time < HOUR_INITIAL:
-            continue
+
         if last_date == "":
             last_date = date
         elif last_date != date:
@@ -60,32 +64,32 @@ with open(FILENAME, "r") as file:
             reds_day = 0
             greens_day = 0
 
-        if reds_day < LIMIT_REDS_PER_DAY and greens_day < LIMIT_GREENS_PER_DAY:
-            # result = manager.bet_after_first_red(message, message_type, False, assertiveness)
-            result = manager.bet_after_second_red(message, message_type, False, assertiveness)
-            # result = manager.bet_after_third_red(
-            #     message, message_type, False)
-            if result == "red":
-                # print(f"## Date {date}")
-                # print(f"Hora: {hour} - {message}\n")
-                # reds_day += 1
-                if hour in map_reds:
-                    map_reds[hour] += 1
-                else:
-                    map_reds[hour] = 1
-            elif result == "green":
-                greens_day += 1
+        if reds_day >= LIMIT_REDS_PER_DAY or greens_day >= LIMIT_GREENS_PER_DAY:
+            continue
+
+        # result = manager.bet_after_first_red(
+        #     message, message_type, False, assertiveness, GALE
+        # )
+        result = manager.bet_after_second_red(message, message_type, False, assertiveness, GALE)
+        if result == "red":
+            manager.set_stack_type_result([])
+            reds_day += 1
+        elif result == "green":
+            greens_day += 1
 
 
-print("Fim do programa")
-# print(manager.show_panel(""))
-print(f"Total de REDs: {total_reds}")
-print(f"Total de GREENs: {total_greens}")
+# print(f"Total de REDs: {total_reds}")
+# print(f"Total de GREENs: {total_greens}")
+total_bets = total_reds + total_greens
+print(f"Total de apostas: {total_bets}")
 
-gain = total_greens * VALUE_BET  - (total_reds * VALUE_BET * 7)
+
+
+gain = total_greens * VALUE_BET - (total_reds * VALUE_BET * FACTOR_MULTI)
 
 print(f"Total de ganhos: {gain}")
+if total_bets > 0:
+    percent_greens = total_greens / (total_greens + total_reds) * 100
+    print(f"Taxa de acerto: {round(float(percent_greens))}%")
 
-print("Mapa de REDs por hora")
-for key in map_reds:
-    print(f"{key}, {map_reds[key]}")
+print("\nSimulation finished!")
