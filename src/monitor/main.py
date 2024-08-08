@@ -14,7 +14,7 @@ TIME_FOR_REFRESH = 20  # minutes
 HOUR_INITIAL = "09:00"
 HOUR_END = "13:59"
 LIMIT_REDS_PER_DAY = 2
-ACCURACY = 85.0
+ACCURACY = 80.0
 VALUE_BET = 10
 HAS_BET = True
 GALE = 0
@@ -27,12 +27,16 @@ Manager_vip_group = Manager(
     hour_end=HOUR_END,
     limit_reds_per_day=LIMIT_REDS_PER_DAY,
     gale=GALE,
+    accuracy=ACCURACY,
+    has_bet=HAS_BET
 )
 Manager_group = Manager(
     hour_initial=HOUR_INITIAL,
     hour_end=HOUR_END,
     limit_reds_per_day=LIMIT_REDS_PER_DAY,
     gale=GALE,
+    accuracy=ACCURACY,
+    has_bet=HAS_BET
 )
 
 reds_day = 0

@@ -4,18 +4,18 @@ from services import bet_aviator
 
 
 class Manager:
-    def __init__(self, hour_initial, hour_end, limit_reds_per_day, gale):
+    def __init__(self, hour_initial, hour_end, limit_reds_per_day, gale, accuracy, has_bet):
         self.total_reds = 0
         self.total_greens = 0
         self.path_sound = "assets/notification.wav"
         self.stack_type_result = []
         self.stack_type_message = []
-        self.accuracy = 70.0
-        self.current_accuracy = 0
+        self.accuracy = accuracy
         self.hour_initial = hour_initial
         self.hour_end = hour_end
         self.limit_reds_per_day = limit_reds_per_day
         self.gale = gale
+        self.has_bet = has_bet
 
     def set_stack_type_result(self, message_type):
         self.stack_type_result.append(message_type)
