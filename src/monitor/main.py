@@ -75,7 +75,7 @@ def monitor_group(_, message):
     print("### NORMAL GROUP ###")
     Manager_group.show_panel(message_type=message_type)
     result = Manager_vip_group.bet_after_first_red(
-        message_text, message_type, HAS_BET, assertiveness, GALE
+        message_text, message_type, assertiveness
     )
     if result == "red":
         reds_day += 1
