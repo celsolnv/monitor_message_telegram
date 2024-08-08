@@ -7,7 +7,7 @@ LIMIT_GREENS_PER_DAY = 5
 HOUR_INITIAL = "09:00"
 HOUR_END = "13:59"
 GALE = 0
-FACTOR_MULTI  = 1
+FACTOR_MULTI = 1
 if GALE == 1:
     FACTOR_MULTI = 3
 elif GALE == 2:
@@ -18,6 +18,7 @@ ACCURACY = 85.0
 
 VALUE_BET = 10
 WALLET = 30
+
 
 def write_file(filename, content):
     with open(filename, "a") as file:
@@ -79,7 +80,6 @@ with open(FILENAME, "r") as file:
 
 total_bets = total_reds + total_greens
 print(f"Total de apostas: {total_bets}")
-
 
 
 gain = total_greens * VALUE_BET - (total_reds * VALUE_BET * FACTOR_MULTI)
