@@ -3,7 +3,7 @@ from monitor import Manager
 
 FILENAME = "simulator_vip.log"
 LIMIT_REDS_PER_DAY = 2
-LIMIT_GREENS_PER_DAY = 50
+LIMIT_GREENS_PER_DAY = 5
 HOUR_INITIAL = "09:00"
 HOUR_END = "13:59"
 GALE = 0
@@ -42,6 +42,8 @@ with open("results.log", "w") as file:
 print("Starting simulation...\n")
 with open(FILENAME, "r") as file:
     for line in file:
+        if last_date == "":
+            last_date = date
         date = line[0:10]
         time = line[11:19]
         if time <= HOUR_INITIAL or time >= HOUR_END:
@@ -49,14 +51,9 @@ with open(FILENAME, "r") as file:
 
         message = line[19:]
         message_type = get_type_message(message)
-        assertiveness_prev = get_assertiveness(message)
+        assertiveness = get_assertiveness(message)
 
-        if assertiveness_prev is not None:
-            assertiveness = assertiveness_prev
-
-        if last_date == "":
-            last_date = date
-        elif last_date != date:
+        if last_date != date:
             data = manager.get_data()
             result_str = f"Date -> {last_date} - RED -> {data['total_reds']} - GREEN -> {data['total_greens']}\n"
             write_file(f"results.log", result_str)
@@ -75,7 +72,7 @@ with open(FILENAME, "r") as file:
             message, message_type, False, assertiveness, GALE
         )
         if result == "red":
-            # manager.set_stack_type_result([])
+            manager.set_stack_type_result([])
             reds_day += 1
         elif result == "green":
             greens_day += 1
