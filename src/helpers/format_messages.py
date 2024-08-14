@@ -54,7 +54,7 @@ def get_assertiveness(message: str):
         assertiveness = message.split("Assertividade: ")[1].split("%")[0]
         assertiveness = assertiveness.replace(",", ".")
         return float(assertiveness)
-    return 0
+    return None
 
 
 def check_is_red(message: str):

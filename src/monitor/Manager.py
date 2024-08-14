@@ -58,6 +58,8 @@ class Manager:
         return True
 
     def bet_after_first_red(self, message_text, message_type, assertiveness=0):
+        print('########### => bet_after_first_red')
+        print(f"assertiveness: {assertiveness} - accuracy: {self.accuracy}")
         if assertiveness < self.accuracy:
             return
         result = ""
@@ -66,6 +68,9 @@ class Manager:
 
         if last == "red":
             if message_type == "opportunity":
+                print('########### => vamos apostar!! ')
+                print(self.has_bet)
+                print(message_text)
                 if self.has_bet:
                     self.__play_sound()
                     self.__bet(message_text)
@@ -98,4 +103,5 @@ class Manager:
 
     def __bet(self, message_text):
         reference = get_reference_result(message_text)
+        print(f"Enviando solicitação - Referência: {reference}")
         bet_aviator(reference)

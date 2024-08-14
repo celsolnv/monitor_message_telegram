@@ -53,9 +53,12 @@ def monitor_vip_group(_, message):
 
     message_text = message.text
     message_type = get_type_message(message_text)
-    assertiveness_vip = get_assertiveness(message_text)
+    assertiveness_vip_prev = get_assertiveness(message_text)
+    if assertiveness_vip_prev != None:
+        assertiveness_vip = assertiveness_vip_prev
+    date = message.date.strftime("%Y-%m-%d %H:%M:%S")
 
-    print(">>> VIP GROUP <<<")
+    print(f">>> VIP GROUP {date}<<<")
     Manager_vip_group.show_panel(message_type=message_type)
     result = Manager_vip_group.bet_after_first_red(
         message_text, message_type, assertiveness_vip
@@ -66,7 +69,7 @@ def monitor_vip_group(_, message):
     elif result == "green":
         greens_day += 1
 
-
+"""
 @app.on_message(filters.chat(CHAT_ID) & filters.text)
 def monitor_group(_, message):
     global reds_day, greens_day, assertiveness
@@ -85,7 +88,7 @@ def monitor_group(_, message):
         reds_day += 1
     elif result == "green":
         greens_day += 1
-
+"""
 
 def run_schedule():
     while True:

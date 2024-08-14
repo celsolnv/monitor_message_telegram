@@ -15,5 +15,5 @@ def get_value():
 
 
 def refresh():
-    res = api.get("/refresh")
+    res = api.patch("/refresh")
     return res.json()
